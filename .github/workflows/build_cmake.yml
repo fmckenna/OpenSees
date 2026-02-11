@@ -80,7 +80,7 @@ jobs:
           cd build/Release
           cmake --build . --target OpenSees -j8
           cmake --build . --target OpenSeesPy -j8
-          mv ./OpenSeesPy.dylib ./opensees.dylib
+          mv ./OpenSeesPy.dylib ./opensees.so
       - name: Verification OpenSeesPySP
         run: |
           export PYTHONPATH="./build/Release"
@@ -92,4 +92,4 @@ jobs:
             name: OpenSees_Mac
             path: |
               ./build/Release/OpenSees
-              ./build/Release/opensees.dylib
+              ./build/Release/opensees.so
