@@ -29,8 +29,6 @@ jobs:
           conan profile detect --force
       - name: build OpenSees & OpenSeesPy
         run: |
-          ln -s /opt/homebrew/bin/gcc-13 /usr/local/bin/gcc
-          ln -s /opt/homebrew/bin/gfortran-13 /usr/local/bin/gfortran	
           conan install . --build=missing
           cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin
           cd build/Release
@@ -75,6 +73,7 @@ jobs:
           conan profile detect --force	  
       - name: 2.3.2. Building the OpenSees Applications and Python module
         run: |
+          export FC=/opt/homebrew/bin/gfortran-13
           conan install . --build=missing
           cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin	
           cd build/Release
