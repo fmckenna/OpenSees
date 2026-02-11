@@ -29,21 +29,21 @@ jobs:
           conan profile detect --force
       - name: 2.4.2. Building the OpenSees Applications and Python module
         run: |
-          conan install . --output-folder=. --build=missing
+          conan install . --build=missing
+	  cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin
           cd build/Release
-          cmake ../.. -DCMAKE_TOOLCHAIN_FILE=./generators/conan_toolchain.cmake
           cmake --build . --target OpenSees -j8
           cmake --build . --target OpenSeesPy -j8
-          mv lib/OpenSeesPy.so lib/opensees.so
-      - name: Verification OpenSeesPySP   # Simple Sanity Test
+          mv OpenSeesPy.so opensees.so
+      - name: Verification OpenSeesPy  # Simple Sanity Test
         run: |
-          export PYTHONPATH="./build/lib/"
+          export PYTHONPATH="./build/Release"
           python3 -c "import sys; print(sys.path)"
           python3 ./EXAMPLES/ExamplePython/example_variable_analysis.py
       - name: Run pytest in tests/ folder
         run: |
           python3 -m pip install pytest
-          cp build/lib/opensees.so tests/
+          cp build/Release/opensees.so tests/
           cd tests
           pytest -v
       - name: Upload Artifacts
@@ -51,5 +51,43 @@ jobs:
         with:
             name: OpenSees_Ubuntu
             path: |
-              ./build/bin/OpenSees
-              ./build/lib/opensees.so
+              ./build/Release/OpenSees
+              ./build/Release/opensees.so
+
+  build-mac-conan:
+    name: Build Mac OS
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: 2.1. Obtaining OpenSees Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: conan install	  
+        run: |
+          pip install conan
+          conan profile detect --force	  
+      - name: 2.3.2. Building the OpenSees Applications and Python module
+        run: |
+          conan install . --build=missing          
+	  cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin	
+          cd build/Release
+          cmake --build . --target OpenSees -j8
+          cmake --build . --target OpenSeesPy -j8
+          mv ./OpenSeesPy.dylib ./opensees.dylib
+      - name: Verification OpenSeesPySP
+        run: |
+          export PYTHONPATH="./build/"
+          python3 -c "import sys; print(sys.path)"
+          python3 ./EXAMPLES/ExamplePython/example_variable_analysis.py
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+            name: OpenSees_Mac
+            path: |
+              ./build/OpenSees
+              ./build/opensees.so
