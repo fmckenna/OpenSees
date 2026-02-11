@@ -10,6 +10,51 @@ on:
   workflow_dispatch:
 
 jobs:
+  build-ubuntu:
+    name: Build Ubuntu
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: 2.1. Obtaining OpenSees Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # - name: Needed Applications and Libraries are already satisfied.
+      - name: Conan 1.x
+        run: pip install conan
+      - name: 2.4.2. Building the OpenSees Applications and Python module
+        run: |
+          mkdir build
+          cd build
+          conan install .. --build missing # conan executables location is different.
+          cmake ..
+          cmake --build . --target OpenSees -j8
+          cmake --build . --target OpenSeesPy -j8
+          mv lib/OpenSeesPy.so lib/opensees.so
+      - name: Verification OpenSeesPySP   # Simple Sanity Test
+        run: |
+          export PYTHONPATH="./build/lib/"
+          python3 -c "import sys; print(sys.path)"
+          python3 ./EXAMPLES/ExamplePython/example_variable_analysis.py
+      - name: Run pytest in tests/ folder
+        run: |
+          python3 -m pip install pytest
+          cp build/lib/opensees.so tests/
+          cd tests
+          pytest -v
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+            name: OpenSees_Ubuntu
+            path: |
+              ./build/bin/OpenSees
+              ./build/lib/opensees.so
+
+
   build-win:
     name: Build Windows VS2022
     runs-on: windows-2022
@@ -128,50 +173,3 @@ jobs:
               ./build/OpenSees
               ./build/opensees.so
 
-  build-ubuntu:
-    name: Build Ubuntu
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - name: 2.1. Obtaining OpenSees Source Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      # - name: Needed Applications and Libraries are already satisfied.
-      - name: Conan 1.x
-        run: pip install "conan<2.0"
-      - name: 2.4.2. Building the OpenSees Applications and Python module
-        run: |
-          mkdir build
-          cd build
-          conan install .. --build missing # conan executables location is different.
-          cmake ..
-          cmake --build . --target OpenSees -j8
-          cmake --build . --target OpenSeesPy -j8
-          mv lib/OpenSeesPy.so lib/opensees.so
-      - name: Verification OpenSeesPySP   # Simple Sanity Test
-        run: |
-          export PYTHONPATH="./build/lib/"
-          python3 -c "import sys; print(sys.path)"
-          python3 ./EXAMPLES/ExamplePython/example_variable_analysis.py
-      - name: Run pytest in tests/ folder
-        run: |
-          python3 -m pip install pytest
-          cp build/lib/opensees.so tests/
-          cd tests
-          pytest -v
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-            name: OpenSees_Ubuntu
-            path: |
-              ./build/bin/OpenSees
-              ./build/lib/opensees.so
-#        # Simple MP sanity test
-#        - name: Verification OpenSeesPyMP
-#          run: |
-#            mpiexec -np 2 python ../EXAMPLES/ExamplePython/example_mpi_paralleltruss_explicit.py
