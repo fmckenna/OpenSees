@@ -23,11 +23,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Conan 2.x
+      - name: Install conan
         run: |
           pip install conan
           conan profile detect --force
-      - name: 2.4.2. Building the OpenSees Applications and Python module
+      - name: build OpenSees & OpenSeesPy
         run: |
           conan install . --build=missing
 	  cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin
