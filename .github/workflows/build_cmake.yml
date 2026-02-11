@@ -24,10 +24,10 @@ jobs:
         with:
           python-version: "3.11"
       # - name: Needed Applications and Libraries are already satisfied.
-      - name: Conan 1.x
-        run: |
-	pip install conan
-	conan profile new default --detect
+      - name: Conan 2.x
+	run: |
+          pip install "conan<2.0"
+          conan profile new default --detect
       - name: 2.4.2. Building the OpenSees Applications and Python module
         run: |
           mkdir build
