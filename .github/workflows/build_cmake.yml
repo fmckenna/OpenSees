@@ -30,7 +30,7 @@ jobs:
       - name: build OpenSees & OpenSeesPy
         run: |
           conan install . --build=missing
-	  cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin
+          cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin
           cd build/Release
           cmake --build . --target OpenSees -j8
           cmake --build . --target OpenSeesPy -j8
@@ -73,8 +73,8 @@ jobs:
           conan profile detect --force	  
       - name: 2.3.2. Building the OpenSees Applications and Python module
         run: |
-          conan install . --build=missing          
-	  cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin	
+          conan install . --build=missing
+          cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=build/Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/bin	
           cd build/Release
           cmake --build . --target OpenSees -j8
           cmake --build . --target OpenSeesPy -j8
