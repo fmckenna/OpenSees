@@ -83,7 +83,7 @@ jobs:
           mv ./OpenSeesPy.dylib ./opensees.dylib
       - name: Verification OpenSeesPySP
         run: |
-          export PYTHONPATH="./build/"
+          export PYTHONPATH="./build/Release"
           python3 -c "import sys; print(sys.path)"
           python3 ./EXAMPLES/ExamplePython/example_variable_analysis.py
       - name: Upload Artifacts
@@ -91,5 +91,5 @@ jobs:
         with:
             name: OpenSees_Mac
             path: |
-              ./build/OpenSees
-              ./build/opensees.so
+              ./build/Release/OpenSees
+              ./build/Release/opensees.dylib
