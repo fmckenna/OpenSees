@@ -29,11 +29,9 @@ jobs:
           conan profile detect --force
       - name: 2.4.2. Building the OpenSees Applications and Python module
         run: |
-          mkdir -p build
-          cd build
-          conan install .. --output-folder=. --build=missing
-          ls
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
+          conan install . --output-folder=. --build=missing
+	  cd build/Release
+          cmake ../.. -DCMAKE_TOOLCHAIN_FILE=./generators/conan_toolchain.cmake
           cmake --build . --target OpenSees -j8
           cmake --build . --target OpenSeesPy -j8
           mv lib/OpenSeesPy.so lib/opensees.so
