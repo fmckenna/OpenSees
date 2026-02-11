@@ -33,6 +33,7 @@ jobs:
           cd build
           conan install .. --output-folder=. --build=missing
 	  ls
+	  ls	  
           cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
           cmake --build . --target OpenSees -j8
           cmake --build . --target OpenSeesPy -j8
