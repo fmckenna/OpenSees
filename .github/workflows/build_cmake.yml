@@ -30,7 +30,7 @@ jobs:
       - name: 2.4.2. Building the OpenSees Applications and Python module
         run: |
           conan install . --output-folder=. --build=missing
-	  cd build/Release
+          cd build/Release
           cmake ../.. -DCMAKE_TOOLCHAIN_FILE=./generators/conan_toolchain.cmake
           cmake --build . --target OpenSees -j8
           cmake --build . --target OpenSeesPy -j8
